@@ -2,6 +2,7 @@ import discord
 import LinuxConsole
 import time
 import config
+import data_manager
 
 class MyClient(discord.Client):
     data = config.path_setter()
@@ -11,12 +12,11 @@ class MyClient(discord.Client):
         print("ping = ""%.1f" %(super().latency*1000), "ms")
         
         
-        
-
 class EventReceiver(MyClient):
     
     async def on_message(self, message):
         # print('Message from {0.author}: {0.content}'.format(message))
+        data_manager.TxtManager.create_log(message)
         if message.content.startswith("$"):
             await message.channel.send(LinuxConsole.Console.determine_command(message, MyClient.data))
         if message.content.startswith("%ping"): 
@@ -37,6 +37,5 @@ async def ping(message):
    
 async def gigachad(message):
     await message.channel.send("https://tenor.com/view/gigachad-chad-gif-20773266")
-   
-print(MyClient.data["token"])
+    
 events.run(MyClient.data["token"])
