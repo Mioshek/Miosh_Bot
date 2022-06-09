@@ -17,9 +17,8 @@ class EventReceiver(MyClient):
     
     async def on_message(self, message):
         # print('Message from {0.author}: {0.content}'.format(message))
-        
         if message.content.startswith("$"):
-            await message.channel.send(LinuxConsole.Console.execute_command(message,MyClient.data))
+            await message.channel.send(LinuxConsole.Console.determine_command(message, MyClient.data))
         if message.content.startswith("%ping"): 
             await ping(message)  
         if message.content.startswith("%gigachad"): await gigachad(message) 
@@ -39,5 +38,5 @@ async def ping(message):
 async def gigachad(message):
     await message.channel.send("https://tenor.com/view/gigachad-chad-gif-20773266")
    
-
+print(MyClient.data["token"])
 events.run(MyClient.data["token"])

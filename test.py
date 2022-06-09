@@ -57,7 +57,10 @@
 # home = str(Path.home())
 # print(home)
 
-def main():
-    return 1, 2
-print(main())
-cd
+# def main():
+#     return 1, 2
+# print(main())
+# cd
+x = " cd"
+if "cd" in x:
+    print("yes")
