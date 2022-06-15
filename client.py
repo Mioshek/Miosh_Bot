@@ -3,39 +3,48 @@ import LinuxConsole
 import time
 import config
 import data_manager
+from discord.ext import commands
 
-class MyClient(discord.Client):
-    data = config.path_setter()
-    
-    async def on_ready(self):
-        print('Logged on as {0}!'.format(self.user))
-        print("ping = ""%.1f" %(super().latency*1000), "ms")
-        
-        
-class EventReceiver(MyClient):
-    
-    async def on_message(self, message):
-        # print('Message from {0.author}: {0.content}'.format(message))
-        data_manager.TxtManager.create_log(message)
-        if message.content.startswith("$"):
-            await message.channel.send(LinuxConsole.Console.determine_command(message, MyClient.data))
-        if message.content.startswith("%ping"): 
-            await ping(message)  
-        if message.content.startswith("%gigachad"): await gigachad(message) 
-    
-    # async def on_message_delete
+data = config.default_path_setter()#sets default path and returns loaded json data
+bot_prefix = data["bot_prefix"]
+linux_prefix = data["linux_prefix"]
+bot = commands.Bot(command_prefix=bot_prefix)    
 
+
+class MyClient():
+    
+    @bot.event
+    async def on_ready():
+        print('Logged on as {0}!'.format(bot.user))
+        print("ping = ""%.1f" %(bot.latency*1000), "ms")
+    
+    @bot.event
+    async def on_message(ctx):
+        print('Message from {0.author}: {0.content}'.format(ctx))
+        config.create_log(ctx)
+        if ctx.content.startswith(linux_prefix):
+            await ctx.channel.send(LinuxConsole.Console.determine_command(ctx, data))
+        if ctx.content.startswith(bot_prefix + "ping"): 
+            await ping(ctx)  
+        if ctx.content.startswith(bot_prefix + "gigachad"): await gigachad(ctx) 
+               
 client = MyClient()
-events = EventReceiver()
 
+@staticmethod
+def run():    
+    bot.run(data["token"])
+
+@bot.command()
 async def ping(message):
-   before = time.monotonic()
-   try:await message.delete()
-   except: pass
-   ping = ((time.monotonic() - before) * 1000)-60
-   await message.channel.send(f"Ping: `{int(ping)}ms`")
+    before = time.perf_counter_ns()
+    try:await message.delete()
+    except: pass
+    ping:float = ((time.perf_counter_ns() - before)/1_000_000)
+    ping_field:str = f"{ping:.1f} ms"
+    embed=discord.Embed(color=0x00ff00)
+    embed.add_field(name="Ping: ", value=ping_field, inline=False)
+    await message.channel.send(embed=embed)
    
+@bot.command()   
 async def gigachad(message):
     await message.channel.send("https://tenor.com/view/gigachad-chad-gif-20773266")
-    
-events.run(MyClient.data["token"])

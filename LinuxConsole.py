@@ -87,7 +87,7 @@ class ChangeDirectory:
             else: return ChangeDirectory.go_specyfic_directory(current_path, second_argument, json_data)
         elif command_length == 1:
             return ChangeDirectory.go_user_directory(current_path, json_data)
-        else: return "```No such file or directory: {path}\n The only avaliable are: \n{avaliable}```". format(path=current_path + command[1], avaliable=os.listdir(current_path))
+        else: return f"```No such file or directory: {current_path + command[1]}\n The only avaliable are: \n{os.listdir(current_path)}```"
         
     #returnes last used path and current path, backs you up to last used path
     @staticmethod
