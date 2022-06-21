@@ -16,23 +16,25 @@ class AllCommands:
         self.raw_data = Utilities.split_into_parts(ctx.content[1:], " ", False)
     
     async def execute_bot_command(self):
-        if self.ctx.author.id in self.admin_ids.values():
-            if self.ctx.content.startswith(self.linux_prefix):
-                await AdminCommands.linux_commands(self.ctx, self.data)
-            if self.raw_data[0] == "mkadm":
-                await AdminCommands.add_admin(self.ctx, self.data, self.raw_data, self.bot)
-            if self.raw_data[0] == "rmadm":
-                await AdminCommands.rm_admin(self.ctx, self.data, self.raw_data, self.bot) 
-            if self.raw_data[0] in ["change_prefix", "cp"] and self.ctx.content.startswith(self.bot_prefix):
-                return await AdminCommands.change_prefix_popup(self.ctx, self.bot, self.raw_data)      
-        
-        if self.ctx.content.startswith(self.bot_prefix + "ping"): 
-            await NormalCommands.ping(self.ctx) 
-        if self.ctx.content.startswith(self.bot_prefix + "gigachad"):
-            await NormalCommands.gigachad(self.ctx)
-        if self.ctx.content.startswith(self.bot_prefix + "roll dice"):
-            await NormalCommands.roll_dice(self.ctx)
-    
+        try:
+            if self.ctx.author.id in self.admin_ids.values():
+                
+                if self.ctx.content.startswith(self.linux_prefix):
+                    await AdminCommands.linux_commands(self.ctx, self.data)
+                if self.raw_data[0] == "mkadm":
+                    await AdminCommands.add_admin(self.ctx, self.data, self.raw_data, self.bot)
+                if self.raw_data[0] == "rmadm":
+                    await AdminCommands.rm_admin(self.ctx, self.data, self.raw_data, self.bot) 
+                if self.raw_data[0] in ["change_prefix", "cp"] and self.ctx.content.startswith(self.bot_prefix):
+                    return await AdminCommands.change_prefix_popup(self.ctx, self.bot, self.raw_data)      
+            
+            if self.ctx.content.startswith(self.bot_prefix + "ping"): 
+                await NormalCommands.ping(self.ctx) 
+            if self.ctx.content.startswith(self.bot_prefix + "gigachad"):
+                await NormalCommands.gigachad(self.ctx)
+            if self.ctx.content.startswith(self.bot_prefix + "roll dice"):
+                await NormalCommands.roll_dice(self.ctx)
+        except: pass
 
 class AdminCommands:
     
