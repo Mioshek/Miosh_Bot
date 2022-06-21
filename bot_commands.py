@@ -22,7 +22,9 @@ class AllCommands:
             if self.raw_data[0] == "mkadm":
                 await AdminCommands.add_admin(self.ctx, self.data, self.raw_data, self.bot)
             if self.raw_data[0] == "rmadm":
-                await AdminCommands.rm_admin(self.ctx, self.data, self.raw_data, self.bot)      
+                await AdminCommands.rm_admin(self.ctx, self.data, self.raw_data, self.bot) 
+            if self.raw_data[0] in ["change_prefix", "cp"] and self.ctx.content.startswith(self.bot_prefix):
+                return await AdminCommands.change_prefix_popup(self.ctx, self.bot, self.raw_data)      
         
         if self.ctx.content.startswith(self.bot_prefix + "ping"): 
             await NormalCommands.ping(self.ctx) 
@@ -55,8 +57,32 @@ class AdminCommands:
         admins.pop(str(admin_username))
         data_manager.JsonManager.write_to_json(data)
     
-    async def change_prefix():
-        pass
+    async def change_prefix_popup(ctx, bot, raw_data):
+        message_text = ("Do you really want to change bot prefix?")
+        embed=discord.Embed(color=0xFF0000)
+        embed.add_field(name="Change Prefix: ", value=message_text, inline=False)
+        message = await ctx.channel.send(embed=embed)
+        # no_emojy = bot.get_emoji()
+        # yes_emojy = bot.get_emoji()
+        await message.add_reaction("✅")
+        await message.add_reaction("❌")
+        return raw_data[1]
+        
+    async def change_prefix_in_json(json_data, reaction, prefix):
+        if str(reaction.emoji) == "✅":
+                #fetch new results from the Spotify API
+                message_text = f"Prefix Changed Into {prefix}"
+                embed=discord.Embed(color=0xFF0000)
+                embed.add_field(name="Change Prefix: ", value=message_text, inline=False)
+                await reaction.message.edit(embed=embed)
+                json_data["bot_prefix"] = prefix
+                data_manager.JsonManager.write_to_json(json_data)
+        if str(reaction.emoji) == "❌":
+                #fetch new results from the Spotify API
+                message_text = f"Prefix Not Changed"
+                embed=discord.Embed(color=0xFF0000)
+                embed.add_field(name="Change Prefix: ", value=message_text, inline=False)
+                await reaction.message.edit(embed=embed)
     
 
 class NormalCommands():

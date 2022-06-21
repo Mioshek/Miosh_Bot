@@ -9,7 +9,7 @@ bot = commands.Bot(command_prefix=bot_prefix)
 
 
 class MyClient():
-    
+    changed_prefix = ""
     @bot.event
     async def on_ready():
         print('Logged on as {0}!'.format(bot.user))
@@ -20,9 +20,16 @@ class MyClient():
         print('Message from {0.author}: {0.content}'.format(ctx))
         config.create_log(ctx)
         cmd = bot_commands.AllCommands(data, ctx, bot)
-        await cmd.execute_bot_command()
-         
-               
+        second_arg = await cmd.execute_bot_command()
+        if second_arg is not None and len(second_arg) == 1:
+            MyClient.changed_prefix = second_arg
+    
+    @bot.event
+    async def on_reaction_add(reaction, user):
+        print("here")
+        if user != bot.user:
+            await bot_commands.AdminCommands.change_prefix_in_json(data, reaction, MyClient.changed_prefix)
+
 client = MyClient()
 
 @staticmethod
