@@ -61,6 +61,31 @@
 #     return 1, 2
 # print(main())
 # cd
-x = " cd"
-if "cd" in x:
-    print("yes")
+# x = " cd"
+# if "cd" in x:
+#     print("yes")
+# dictionary = {
+#     1:"one",
+#     2:"two",
+#     3:"three"
+# }
+# if "two" in dictionary:
+#     print(True)
+# else: print(False)
+
+def add(x):
+    return x+5
+
+def divide(x):
+    return x/5
+
+def subtract(x):
+    return x-5
+
+dictionary = {}
+dictionary["add"] = add
+dictionary["divide"] = divide
+dictionary["subtract"] = subtract
+
+
+print(dictionary["add"](5))

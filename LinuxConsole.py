@@ -2,13 +2,14 @@ import subprocess
 import data_manager
 from pathlib import Path
 import os
+from Utilities import *
 
 class Console:
     #divides commands between cd and others (working in progress; some new commands will be added if neccessary)
     def determine_command(message, read_data_raw)->str:
         path:dict = read_data_raw["paths"]
-        command:list = message.content[1:].split(" ")
-        print(command)
+        command:list = Utilities.split_into_parts(message.content[1:], " ",False)
+        print(command, "command")
         command_copy:list = command
         for index, argument in enumerate(command_copy):
             if argument == "" or argument == " " or argument == "   ":
@@ -32,14 +33,14 @@ class Console:
                             stdout=subprocess.PIPE, 
                              stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
-            path_raw:list = str(stdout)[2:-3].split("/")
-        else: path_raw = path.split("/")
+            path_raw:list = Utilities.split_into_parts(str(stdout)[:-3], "/",False)
+        else: path_raw = Utilities.split_into_parts(path, "/",False)
         if dir_counter == 0: 
             for element in path_raw[1:]:
                 path += "/" + element 
         else:
             path = ""
-            for element in path_raw[1:dir_counter]:
+            for element in path_raw[:dir_counter]:
                 path += "/" + element 
         return path + "/"
     
@@ -100,7 +101,9 @@ class ChangeDirectory:
     @staticmethod
     def go_up_dir(current_path, json_data)->str:
         previous_path = current_path
-        current_path = Console.get_path(-2, current_path)
+        print(current_path)
+        current_path = Console.get_path(-1, current_path)
+        print(current_path)
         return Console.execute_command("pwd", current_path, previous_path, json_data)
     
     #moves you to user directory /home/user
@@ -114,7 +117,6 @@ class ChangeDirectory:
     @staticmethod
     def go_specyfic_directory(current_path, second_argument, json_data)->str:
         avaliable_dirs:list = os.listdir(current_path)
-        print(type(avaliable_dirs))
         previous_path = current_path
         if second_argument in avaliable_dirs:
             is_dir = os.path.isdir(current_path + "/" + second_argument)

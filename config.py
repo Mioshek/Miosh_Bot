@@ -25,3 +25,7 @@ def create_log(message):
     Server: {message.guild.name} Channel: {message.channel}
     User: {message.author} Log: {message.content}\n"""
     data_manager.TxtManager.save_txt(log, LOGS_PATH)
+    
+def is_admin(message, admin_list):
+    if message.author.id in admin_list:
+        return True
